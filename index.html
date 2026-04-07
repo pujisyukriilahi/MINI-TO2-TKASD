@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Tryout TKA Matematika SD - Pertemuan 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax untuk merender persamaan LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .option-card { cursor: pointer; transition: all 0.2s; border: 2px solid #e5e7eb; position: relative; }
+        .option-card:hover { border-color: #3b82f6; background-color: #f0f7ff; }
+        .selected { border-color: #2563eb; background-color: #dbeafe; font-weight: bold; }
+        .nav-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
+        .nav-unanswered { background-color: #f3f4f6; color: #9ca3af; border-color: #e5e7eb; }
+        .nav-answered { background-color: #2563eb; color: white; }
+        .nav-current { border-color: #1e3a8a; box-shadow: 0 0 0 2px #bfdbfe; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .res-box { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 0.8rem; font-weight: bold; color: white; }
+        .res-correct { background-color: #10b981; }
+        .res-wrong { background-color: #ef4444; }
+        img.stimulus-img { max-width: 100%; height: auto; margin: 15px auto; display: block; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0; background: white; }
+        .mjx-chtml { font-size: 110% !important; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 min-h-screen font-medium">
+
+    <script>
+        const NOMOR_WA_GURU = "628971021300"; 
+    </script>
+
+    <!-- 1. HALAMAN INTRO -->
+    <div id="intro-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 fade-in">
+            <div class="bg-blue-600 p-8 text-center text-white">
+                <h1 class="text-3xl font-black mb-2 uppercase tracking-tight">Mini Tryout Matematika SD</h1>
+                <p class="text-blue-100 font-bold opacity-90">Pertemuan 2 - Geometri & Pengukuran</p>
+            </div>
+            <div class="p-8">
+                <div class="grid grid-cols-2 gap-4 mb-8 text-center">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Jumlah Soal</p>
+                        <p class="text-2xl font-black text-slate-800">10 Soal</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Waktu</p>
+                        <p class="text-2xl font-black text-slate-800">25 Menit</p>
+                    </div>
+                </div>
+
+                <div class="mb-8 space-y-4 text-sm leading-relaxed">
+                    <h3 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2 uppercase tracking-wider text-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                        Instruksi Pengerjaan:
+                    </h3>
+                    <ul class="text-slate-600 space-y-2 list-disc pl-5">
+                        <li>Lengkapi data diri kamu dengan benar.</li>
+                        <li>Pastikan koneksi internet stabil selama mengerjakan.</li>
+                        <li>Gunakan tombol "Selanjutnya" untuk berpindah soal.</li>
+                        <li>Setelah selesai, kirim laporan hasil ke WhatsApp Guru.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Nama Lengkap Murid</label>
+                        <input type="text" id="input-name" placeholder="Nama murid..." class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-blue-600 outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Asal Sekolah</label>
+                        <input type="text" id="input-school" placeholder="Contoh: SDN Pertiwi 1" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-blue-600 outline-none font-bold">
+                    </div>
+                </div>
+
+                <button onclick="startTest()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-xl hover:bg-blue-700 shadow-xl transition-all transform active:scale-95 uppercase tracking-widest">
+                    Mulai Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. AREA UJIAN -->
+    <div id="main-test-area" class="hidden max-w-6xl mx-auto py-6 px-4 flex flex-col lg:flex-row gap-6 fade-in">
+        <div class="flex-1">
+            <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 leading-tight tracking-tight">Mini TO Pertemuan 2</h1>
+                    <p id="user-display" class="text-xs text-blue-600 font-bold mt-1 uppercase tracking-wider"></p>
+                </div>
+                <div class="bg-red-50 px-4 py-2 rounded-xl text-red-600 font-black text-2xl font-mono border border-red-100 shadow-sm" id="timer">25:00</div>
+            </div>
+
+            <div id="quiz-card" class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+                <div class="bg-slate-50 p-6 border-b border-slate-100" id="stimulus-content-box">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">Stimulus Soal</span>
+                    </div>
+                    <div id="stimulus-text" class="text-slate-700 leading-relaxed italic text-sm md:text-base font-medium"></div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-start gap-4 mb-6">
+                        <span id="q-num" class="bg-slate-800 text-white font-bold px-4 py-2 rounded-xl shadow-md">1</span>
+                        <h2 id="question-text" class="text-lg font-bold pt-1 leading-snug text-slate-800"></h2>
+                    </div>
+                    <div id="options-container" class="space-y-3"></div>
+                </div>
+                <div class="p-6 bg-slate-50 flex justify-between border-t border-slate-100">
+                    <button id="prev-btn" onclick="changeQuestion(-1)" class="font-bold text-slate-400 hover:text-blue-600 uppercase text-xs tracking-widest transition-colors">Sebelumnya</button>
+                    <button id="next-btn" onclick="changeQuestion(1)" class="bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 uppercase text-xs tracking-widest shadow-lg shadow-blue-100 transition-all">Selanjutnya</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:w-64 text-center">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 sticky top-6">
+                <h3 class="font-bold text-slate-900 mb-4 text-[10px] uppercase tracking-[0.2em] opacity-50">Navigasi Soal</h3>
+                <div id="nav-grid" class="grid grid-cols-4 gap-2 mb-6"></div>
+                <button onclick="confirmFinish()" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-black shadow-lg hover:bg-emerald-700 transition-all uppercase text-xs tracking-widest">KIRIM JAWABAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. HALAMAN HASIL -->
+    <div id="result-screen" class="hidden min-h-screen bg-slate-50 flex items-center justify-center p-6 py-12">
+        <div class="max-w-2xl w-full bg-white rounded-[40px] shadow-2xl p-10 text-center border border-slate-200 fade-in">
+            <h2 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Hasil Mini TO</h2>
+            <div class="my-6 py-8 border-y border-slate-100">
+                <p class="text-slate-400 text-xs font-bold uppercase mb-1 tracking-widest">Skor Akhir Kamu</p>
+                <div id="final-score" class="text-8xl font-black text-blue-600 leading-none">0</div>
+                <p class="mt-4 font-bold text-slate-600 text-sm tracking-wider uppercase italic">Benar <span id="correct-count">0</span> dari 10 Soal</p>
+            </div>
+
+            <div class="mb-10 text-left">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-100 pb-2 text-center">Ringkasan Hasil Per Nomor</h3>
+                <div id="eval-grid" class="flex flex-wrap gap-2 justify-center"></div>
+            </div>
+            
+            <div class="space-y-4">
+                <button onclick="sendToWA()" class="w-full bg-emerald-500 text-white py-5 rounded-3xl font-black text-lg flex items-center justify-center gap-3 hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-100 uppercase tracking-widest">
+                    Kirim Hasil ke WA Guru
+                </button>
+                <button onclick="location.reload()" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg">Ulangi Latihan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm text-center">
+        <div class="bg-white rounded-3xl p-10 max-w-sm w-full shadow-2xl border border-slate-100">
+            <h3 class="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Selesai?</h3>
+            <p class="text-slate-500 text-sm mb-8 leading-relaxed font-medium">Pastikan semua soal sudah kamu jawab dengan teliti sebelum melihat hasil evaluasi.</p>
+            <div class="flex gap-3 font-bold uppercase text-[10px] tracking-widest">
+                <button onclick="closeModal()" class="flex-1 py-4 text-slate-400 bg-slate-100 rounded-2xl">Batal</button>
+                <button onclick="finishQuiz()" class="flex-1 py-4 font-black text-white bg-blue-600 rounded-2xl shadow-lg">Ya, Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                type: "mcq", 
+                stimulus: "<img src='SD.2.1.png' class='stimulus-img' onerror=\"this.style.display='none'\"> Sebuah struktur mini dibangun menggunakan kubus-kubus satuan yang identik. Berikut adalah penampakan struktur tersebut jika dilihat dari arah Depan dan Samping Kanan:", 
+                question: "Berapakah jumlah minimal kubus satuan yang dibutuhkan untuk membangun struktur tersebut agar tampak sesuai dengan kedua pandangan di atas?", 
+                options: ["6 buah", "7 buah", "8 buah", "9 buah"], 
+                answer: 0 
+            },
+            { 
+                type: "tf", 
+                stimulus: "Sebuah akuarium berbentuk balok dengan panjang \\(80\\ \\text{cm}\\), lebar \\(50\\ \\text{cm}\\), dan tinggi \\(60\\ \\text{cm}\\). Akuarium tersebut awalnya kosong dan akan diisi air menggunakan keran yang mengalirkan air sebanyak \\(5\\ \\text{liter}\\) setiap menitnya.", 
+                question: "Tentukan Benar atau Salah untuk setiap pernyataan berikut!", 
+                options: [
+                    "Kapasitas total akuarium tersebut adalah \\(240\\ \\text{liter}\\).", 
+                    "Untuk mengisi setengah bagian akuarium, dibutuhkan waktu \\(24\\ \\text{menit}\\).", 
+                    "Jika keran dinyalakan selama \\(0,5\\ \\text{jam}\\), air di akuarium akan tumpah."
+                ], 
+                answer: [true, true, false] 
+            },
+            { 
+                type: "mcq", 
+                stimulus: "<img src='SD.2.3.png' class='stimulus-img' onerror=\"this.style.display='none'\"> Perhatikan denah taman bermain berikut ini! (Bangun datar berbentuk huruf 'L' terbalik. Sisi tegak kiri panjangnya 12 m, sisi mendatar atas 15 m, sisi tegak kanan 5 m, dan sisi mendatar bagian dalam 7 m). Di sekeliling taman tersebut akan dipasangi pagar kawat.", 
+                question: "Jika harga kawat adalah Rp25.000,00 per meter, berapakah total biaya yang harus dikeluarkan?", 
+                options: ["Rp1.250.000,00", "Rp1.350.000,00", "Rp1.400.000,00", "Rp1.500.000,00"], 
+                answer: 1 
+            },
+            { 
+                type: "mcq", 
+                stimulus: "Andi berangkat dari Kota A ke Kota B yang berjarak \\(165\\ \\text{km}\\) pada pukul 08.30 menggunakan sepeda motor dengan kecepatan rata-rata \\(50\\ \\text{km/jam}\\). Di tengah perjalanan, Andi berhenti untuk beristirahat dan makan selama 45 menit.", 
+                question: "Pukul berapakah Andi tiba di Kota B?", 
+                options: ["11.48", "12.33", "12.45", "13.00"], 
+                answer: 1 
+            },
+            { 
+                type: "checkbox", 
+                stimulus: "Sebuah truk pengangkut bahan makanan membawa muatan sebagai berikut:<br>\\(1,2\\ \\text{ton}\\) beras<br>\\(4,5\\ \\text{kuintal}\\) tepung terigu<br>\\(150\\ \\text{kg}\\) gula pasir", 
+                question: "Pilih semua pernyataan yang benar berdasarkan informasi di atas!", 
+                options: [
+                    "Total beban muatan truk tersebut dalam satuan kilogram adalah \\(1.800\\ \\text{kg}\\).", 
+                    "Berat beras adalah delapan kali lipat berat gula pasir.", 
+                    "Tepung terigu merupakan muatan yang paling berat di antara ketiganya.", 
+                    "Selisih berat antara beras dan tepung terigu adalah \\(750\\ \\text{kg}\\)."
+                ], 
+                answer: [0, 1, 3] 
+            },
+            { 
+                type: "mcq", 
+                stimulus: "<img src='SD.2.6.png' class='stimulus-img' onerror=\"this.style.display='none'\"> Andi mulai mengerjakan PR tepat saat jarum jam menunjukkan pukul 19.20.", 
+                question: "Berapakah besar sudut terkecil yang dibentuk oleh kedua jarum jam pada waktu tersebut?", 
+                options: ["\\(100^\\circ\\)", "\\(110^\\circ\\)", "\\(120^\\circ\\)", "\\(130^\\circ\\)"], 
+                answer: 0 
+            },
+            { 
+                type: "mcq", 
+                stimulus: "Terdapat sebuah benda logam yang merupakan gabungan dari sebuah kubus dan sebuah balok. Kubus tersebut memiliki panjang rusuk \\(10\\ \\text{cm}\\). Balok yang berada di bawahnya memiliki panjang \\(20\\ \\text{cm}\\), lebar \\(10\\ \\text{cm}\\), dan tinggi \\(5\\ \\text{cm}\\). Jika berat logam tersebut adalah \\(8\\ \\text{gram}\\) untuk setiap \\(1\\ \\text{cm}^3\\).", 
+                question: "Berapakah total berat benda logam tersebut?", 
+                options: ["\\(8\\ \\text{kg}\\)", "\\(12\\ \\text{kg}\\)", "\\(16\\ \\text{kg}\\)", "\\(20\\ \\text{kg}\\)"], 
+                answer: 2 
+            },
+            { 
+                type: "mcq", 
+                stimulus: "<img src='SD.2.8.png' class='stimulus-img' onerror=\"this.style.display='none'\"> Perhatikan gambar di bawah ini!", 
+                question: "Berdasarkan perbandingan bayangan pada gambar, taksiran tinggi tiang bendera yang paling mendekati adalah ....", 
+                options: ["6 meter", "7,5 meter", "9 meter", "12 meter"], 
+                answer: 1 
+            },
+            { 
+                type: "tf", 
+                stimulus: "Diberikan beberapa pernyataan mengenai sifat bangun datar segiempat.", 
+                question: "Tentukan Benar atau Salah untuk setiap pernyataan!", 
+                options: [
+                    "Belah ketupat selalu memiliki diagonal yang saling berpotongan tegak lurus.", 
+                    "Trapesium sama kaki memiliki dua pasang sudut yang sama besar.", 
+                    "Jajar genjang memiliki dua pasang sisi sejajar dan semua sudutnya siku-siku."
+                ], 
+                answer: [true, true, false] 
+            },
+            { 
+                type: "checkbox", 
+                stimulus: "Sebuah bus pariwisata menempuh perjalanan dari Jakarta ke Bandung. Jarak yang ditempuh adalah \\(150\\ \\text{km}\\). Bus tersebut menghabiskan \\(1\\ \\text{liter}\\) solar untuk setiap \\(10\\ \\text{km}\\) perjalanan. Harga solar adalah Rp10.000,00 per liter.", 
+                question: "Pilih semua pernyataan yang benar!", 
+                options: [
+                    "Bus tersebut membutuhkan total \\(15\\ \\text{liter}\\) solar untuk sampai ke tujuan.", 
+                    "Biaya solar yang harus dikeluarkan untuk perjalanan tersebut adalah Rp150.000,00.", 
+                    "Jika kecepatan rata-rata bus adalah \\(60\\ \\text{km/jam}\\), maka waktu tempuh murni (tanpa berhenti) adalah 2,5 jam.", 
+                    "Jika kapasitas tangki solar adalah \\(40\\ \\text{liter}\\), maka tangki tersebut cukup untuk perjalanan pulang-pergi (Jakarta-Bandung-Jakarta)."
+                ], 
+                answer: [0, 1, 2, 3] 
+            }
+        ];
+
+        let currentIdx = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let student = { name: "", school: "" };
+        let timeLeft = 25 * 60;
+        let timerInterval;
+
+        function startTest() {
+            student.name = document.getElementById('input-name').value.trim();
+            student.school = document.getElementById('input-school').value.trim();
+            if (!student.name || !student.school) { alert("Harap isi Nama & Sekolah!"); return; }
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('main-test-area').classList.remove('hidden');
+            document.getElementById('user-display').innerText = `Murid: ${student.name} | Sekolah: ${student.school}`;
+            initNav();
+            loadQuestion();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timer').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            if (timeLeft <= 0) finishQuiz();
+        }
+
+        function initNav() {
+            const grid = document.getElementById('nav-grid');
+            grid.innerHTML = '';
+            questions.forEach((_, i) => {
+                const b = document.createElement('div');
+                b.id = `nav-${i}`;
+                b.className = 'nav-btn nav-unanswered border-slate-200';
+                b.innerText = i + 1;
+                b.onclick = () => { currentIdx = i; loadQuestion(); };
+                grid.appendChild(b);
+            });
+        }
+
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('q-num').innerText = currentIdx + 1;
+            document.getElementById('stimulus-text').innerHTML = q.stimulus;
+            document.getElementById('question-text').innerHTML = q.question;
+            
+            document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+                btn.classList.remove('nav-current');
+                if (idx === currentIdx) btn.classList.add('nav-current');
+                const ans = userAnswers[idx];
+                let done = ans !== null && (!Array.isArray(ans) || (ans.length > 0 && !ans.includes(null)));
+                btn.className = `nav-btn ${done ? 'nav-answered' : 'nav-unanswered'} ${idx === currentIdx ? 'nav-current' : ''}`;
+            });
+
+            const cont = document.getElementById('options-container');
+            cont.innerHTML = '';
+
+            if (q.type === 'mcq') {
+                q.options.forEach((opt, i) => {
+                    const d = document.createElement('div');
+                    d.className = `option-card p-4 rounded-xl flex items-center gap-3 ${userAnswers[currentIdx] === i ? 'selected shadow-sm' : ''}`;
+                    d.innerHTML = `<span class="w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs shrink-0">${String.fromCharCode(65 + i)}</span> <span>${opt}</span>`;
+                    d.onclick = () => { userAnswers[currentIdx] = i; loadQuestion(); };
+                    cont.appendChild(d);
+                });
+            } else if (q.type === 'checkbox') {
+                if (!userAnswers[currentIdx]) userAnswers[currentIdx] = [];
+                q.options.forEach((opt, i) => {
+                    const sel = userAnswers[currentIdx].includes(i);
+                    const d = document.createElement('div');
+                    d.className = `option-card p-4 rounded-xl flex items-center gap-3 ${sel ? 'selected shadow-sm' : ''}`;
+                    d.innerHTML = `<div class="w-6 h-6 border-2 rounded flex items-center justify-center text-blue-600">${sel ? '✓' : ''}</div> <span>${opt}</span>`;
+                    d.onclick = () => {
+                        const pos = userAnswers[currentIdx].indexOf(i);
+                        if (pos > -1) userAnswers[currentIdx].splice(pos, 1);
+                        else userAnswers[currentIdx].push(i);
+                        loadQuestion();
+                    };
+                    cont.appendChild(d);
+                });
+            } else if (q.type === 'tf') {
+                if (!userAnswers[currentIdx]) userAnswers[currentIdx] = new Array(q.options.length).fill(null);
+                q.options.forEach((opt, i) => {
+                    const row = document.createElement('div');
+                    row.className = "flex flex-col md:flex-row justify-between p-3 bg-slate-50 rounded-lg border gap-3 mb-2";
+                    row.innerHTML = `<p class="text-sm font-bold flex-1">${opt}</p>
+                        <div class="flex gap-2">
+                            <button onclick="setTF(${i}, true)" class="px-5 py-2 rounded-xl text-xs font-black ${userAnswers[currentIdx][i] === true ? 'bg-blue-600 text-white shadow-lg' : 'bg-white border text-slate-400'}">BENAR</button>
+                            <button onclick="setTF(${i}, false)" class="px-5 py-2 rounded-xl text-xs font-black ${userAnswers[currentIdx][i] === false ? 'bg-rose-600 text-white shadow-lg' : 'bg-white border text-slate-400'}">SALAH</button>
+                        </div>`;
+                    cont.appendChild(row);
+                });
+            }
+            document.getElementById('prev-btn').disabled = currentIdx === 0;
+            document.getElementById('next-btn').innerText = currentIdx === questions.length - 1 ? "FINISH" : "SELANJUTNYA";
+            if (window.MathJax) { MathJax.typesetPromise(); }
+        }
+
+        window.setTF = (i, v) => { userAnswers[currentIdx][i] = v; loadQuestion(); };
+        function changeQuestion(s) { 
+            if (s === 1 && currentIdx === questions.length - 1) { confirmFinish(); return; }
+            currentIdx += s; loadQuestion(); 
+        }
+
+        function confirmFinish() { document.getElementById('confirm-modal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('confirm-modal').classList.add('hidden'); }
+
+        let SCORE = 0;
+        let WRONG_NOS = [];
+        let CORRECT_MAP = [];
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            let ok = 0;
+            WRONG_NOS = [];
+            CORRECT_MAP = [];
+            questions.forEach((q, i) => {
+                const ua = userAnswers[i];
+                let isOk = false;
+                if (q.type === 'mcq' && ua === q.answer) isOk = true;
+                else if (q.type === 'checkbox' && Array.isArray(ua) && ua.sort().join(',') === q.answer.sort().join(',')) isOk = true;
+                else if (q.type === 'tf' && JSON.stringify(ua) === JSON.stringify(q.answer)) isOk = true;
+                
+                if (isOk) ok++; else WRONG_NOS.push(i + 1);
+                CORRECT_MAP.push(isOk);
+            });
+
+            SCORE = Math.round((ok / questions.length) * 100);
+            document.getElementById('main-test-area').classList.add('hidden');
+            document.getElementById('confirm-modal').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = SCORE;
+            document.getElementById('correct-count').innerText = ok;
+
+            const ev = document.getElementById('eval-grid');
+            ev.innerHTML = '';
+            CORRECT_MAP.forEach((c, i) => {
+                const b = document.createElement('div');
+                b.className = `res-box ${c ? 'res-correct' : 'res-wrong'}`;
+                b.innerText = i + 1;
+                ev.appendChild(b);
+            });
+        }
+
+        function sendToWA() {
+            const text = `*LAPORAN TRYOUT MATEMATIKA SD*\n*PERTEMUAN 2 - GEOMETRI*\n\n👤 Nama: ${student.name}\n🏫 Sekolah: ${student.school}\n📈 *Skor: ${SCORE}*\n✅ Benar: ${document.getElementById('correct-count').innerText} / 10\n❌ Salah Nomor: ${WRONG_NOS.length > 0 ? WRONG_NOS.join(', ') : 'Tidak ada'}\n\n⏰ Waktu: ${new Date().toLocaleString()}`;
+            window.open(`https://wa.me/${NOMOR_WA_GURU}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
